@@ -14,7 +14,7 @@ const MenuNavigator = createStackNavigator({
         headerStyle: {
             backgroundColor: "#512DA8"
         },
-        headerTintColor: '#fff',
+        headerTintColor: '#000',
         headerTitleStyle: {
             color: "#fff"            
         }
