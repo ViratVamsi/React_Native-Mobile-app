@@ -3,6 +3,7 @@ import {Card,ListItem} from 'react-native-elements';
 import {FlatList,Text, ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 import {baseUrl} from '../shared/baseUrl';
+import {Loading} from './LoadingComponent';
 
 function History(){
     return(
@@ -30,7 +31,7 @@ class About extends Component{
         title: 'About us'
     };
 
-    render(){
+    render(){  
         const RenderLeaders = ({item,index}) => {
             return(
                 <ListItem
@@ -43,22 +44,46 @@ class About extends Component{
             );
 
         };
-        return(
-            <ScrollView>
-                <History />
-                
-                <Card
-                title='Corporate Leadership'
-                >   
-                    <FlatList 
-                        data={this.props.leaders.leaders}
-                        renderItem={RenderLeaders}
-                        keyExtractor={item => item.id.toString()}
-                    />
-                </Card>
-            </ScrollView>
-            
-        );
+        if(this.props.leaders.isLoading){
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'
+                    >
+                        <Loading />
+                    </Card>
+                </ScrollView>
+            );
+        }
+        else if(this.props.leaders.errMess){
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        tiltle='Corporate Leadership'
+                    >
+                        <Text>{this.props.leaders.errMess}</Text>
+                    </Card>
+                </ScrollView>
+            );
+        }
+        else{
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'
+                    >
+                        <FlatList 
+                            data={this.props.leaders.leaders}
+                            renderItem={RenderLeaders}
+                            keyExtractor={item => item.id.toString()}
+                            />
+                    </Card>
+                </ScrollView>
+            );
+        }
     }
 }
 
