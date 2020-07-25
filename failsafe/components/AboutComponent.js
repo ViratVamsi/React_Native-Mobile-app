@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import {Card,ListItem} from 'react-native-elements';
+import {LEADERS} from '../shared/leaders';
 import {FlatList,Text, ScrollView} from 'react-native';
 import {connect} from 'react-redux';
 import {baseUrl} from '../shared/baseUrl';
