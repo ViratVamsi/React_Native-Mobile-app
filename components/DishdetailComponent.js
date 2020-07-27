@@ -4,6 +4,7 @@ import {Card,Icon,Input, Rating, AirbnbRating } from 'react-native-elements';
 import {baseUrl} from '../shared/baseUrl';
 import { connect } from 'react-redux';
 import { postFavorite, postComment } from '../redux/ActionCreators';
+import Favorites from './FavoriteComponent';
 
 const mapStateToProps = state => {
     return {
@@ -39,7 +40,7 @@ function RenderDish(props){
                         name={ props.favorite ? 'heart' : 'heart-o'}
                         type='font-awesome'
                         color='#f50'
-                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
+                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress() }
                     />
                     <Icon
                         raised
