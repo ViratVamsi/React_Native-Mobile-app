@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-native-community/datetimepicker": "^2.6.1",
     "expo": "~38.0.1",
+    "expo-mail-composer": "^8.2.1",
     "expo-permissions": "^9.0.1",
     "expo-secure-store": "^9.0.1",
     "expo-splash-screen": "~0.4.0",
