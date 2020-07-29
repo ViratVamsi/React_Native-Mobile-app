@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, StyleSheet, Button, Alert, PanResponder, Share } from 'react-native';
 import {Card,Icon,Input, Rating, AirbnbRating } from 'react-native-elements';
 import {baseUrl} from '../shared/baseUrl';
 import { connect } from 'react-redux';
@@ -20,6 +20,8 @@ const mapDispatchToProps = dispatch => ({
     addComment: (dishId, rating, comment, author) => dispatch(addComment(dishId, rating, comment, author)),
     postComment: (dishId,rating,author,comment) => dispatch(postComment(dishId,rating,author,comment,))
 });
+
+
 
 function RenderDish(props){
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
@@ -60,6 +62,15 @@ function RenderDish(props){
     })
     const dish=props.dish;
     if(dish!=null){
+        const shareDish = (title, message, url) => {
+            Share.share({
+                title: title,
+                message: title + ': ' + message + ' ' + url,
+                url: url
+            },{
+                dialogTitle: 'Share ' + title
+            })
+        }
         return(
             <Animatable.View animation="fadeInDown" duration={2000} delay={1000} 
             ref={ref => this.view = ref}
@@ -87,6 +98,15 @@ function RenderDish(props){
                             type='font-awesome'
                             color='#521DA8'
                             onPress={()=>props.click()}
+                        />
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} 
                         />
                     </View>
                 </Card>
@@ -225,6 +245,7 @@ class DishDetail extends Component {
                                 color="grey"
                                 title="Cancel" 
                             />
+                        
                         </View>
                     </View>
                 </Modal>
