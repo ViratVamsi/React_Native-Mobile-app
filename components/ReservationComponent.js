@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet, Picker, Switch, Button, Alert, TouchableOpacity  } from 'react-native';
-
 import { Icon } from 'react-native-elements';
-// import DatePicker from 'react-native-datepicker'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Moment from 'moment';
 import * as Animatable from 'react-native-animatable';
 import { Notifications } from 'expo';
 import * as  Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
 
 class Reservation extends Component{
 
@@ -42,6 +41,7 @@ class Reservation extends Component{
         return permission;
     }
 
+
     async presentLocalNotification(date) {
         await this.obtainNotificationPermission();
         Notifications.presentLocalNotificationAsync({
@@ -57,7 +57,51 @@ class Reservation extends Component{
             }
         });
     }
-    
+    async obtainCalendarPermission() {
+        let permission = await Permissions.getAsync(Permissions.CALENDAR);
+        if (permission.status !== 'granted') {
+            permission = await Permissions.askAsync(Permissions.CALENDAR);
+            if (permission.status !== 'granted') {
+                Alert.alert('Permission not granted to calendar');
+            }
+        }
+        return permission;
+    }
+
+    async addReservationToCalendar(date) {
+        await this.obtainCalendarPermission();
+
+        let dateMs = Date.parse(date);
+        let startDate = new Date(dateMs);
+        let endDate = new Date(dateMs + 2 * 60 * 60 * 1000);
+
+        await Calendar.createEventAsync(Calendar.DEFAULT, {
+            title: 'Con Fusion Table Reservation',
+            startDate: startDate,
+            endDate: endDate,
+            timeZone: 'Asia/Hong_Kong',
+            location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong'
+        });
+    }
+
+    handleReservation() {
+        console.log(JSON.stringify(this.state));
+        Alert.alert(
+            'Your Reservation OK?',
+            'Number of Guests: ' + this.state.guests + '\nSmoking? ' + this.state.smoking + '\nDate and Time: ' + this.state.date,
+            [
+                { text: 'Cancel', onPress: () => this.resetForm(), style: 'cancel' },
+                {
+                    text: 'OK', onPress: () => {
+                        this.presentLocalNotification(this.state.date);
+                        this.addReservationToCalendar(this.state.date);
+                        this.resetForm()
+                    }
+                },
+            ],
+            { cancelable: false }
+        );
+    }
     resetForm(){
         this.setState({
             guests: 1,
@@ -136,16 +180,7 @@ class Reservation extends Component{
                     </View>
                     <View style={styles.formRow}>
                         <Button
-                            onPress={() => {Alert.alert(
-                                        'Your Reservation OK',
-                                        'Number of Guests: '+this.state.guests+'\nSmoking? '+this.state.smoking+'\nDate and Time:'+this.state.date,
-                                        [
-                                            {text: 'Cancel', onPress: () => this.resetForm(), style: 'cancel'},
-                                            {text: 'OK', onPress: () => this.resetForm()}
-                                        ],
-                                        { cancelable: false }
-                                    );
-                                }
+                            onPress={() => this.handleReservation()
                             }
                             title="Reserve"
                             color="#512DA8"

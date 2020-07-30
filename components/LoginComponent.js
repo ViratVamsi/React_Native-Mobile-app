@@ -7,7 +7,7 @@ import * as Permissions from 'expo-permissions';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { createBottomTabNavigator } from 'react-navigation';
 import { baseUrl } from '../shared/baseUrl';
-
+import Constants from 'expo-constants';
 class LoginTab extends Component {
 
     constructor(props) {
@@ -164,7 +164,20 @@ class RegisterTab extends Component {
         }
 
     }
-
+    getImageFromGallery = async() => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (cameraRollPermission.status === 'granted') {
+            let selectedImage = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+            });
+            if (!selectedImage.cancelled) {
+                this.processImage(selectedImage.uri);
+            }
+        }
+    }
     processImage = async (imageUri) => {
         let processedImage = await ImageManipulator.manipulateAsync(
             imageUri, 
@@ -212,6 +225,10 @@ class RegisterTab extends Component {
                         title="Camera"
                         onPress={this.getImageFromCamera}
                         />
+                    <Button
+                    title="Gallery"
+                    onPress={this.getImageFromGallery}
+                    />
                 </View>
                 <Input
                     placeholder="Username"
@@ -285,7 +302,8 @@ const styles = StyleSheet.create({
     imageContainer: {
         flex: 1,
         flexDirection: 'row',
-        margin: 20
+        margin: 20,
+        padding:10
     },
     image: {
       margin: 10,
